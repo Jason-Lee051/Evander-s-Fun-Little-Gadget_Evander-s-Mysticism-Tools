@@ -1,220 +1,113 @@
-```markdown
+# Evander's Mysticism Tools 玄学工具箱
+基于 PySide6 开发的跨平台奇门遁甲时家排盘桌面应用，精准历法推演 + LLM 智能解盘。
 
-\# 玄学工具箱 · 奇门遁甲排盘与 AI 分析
+本工具依托天文库精准计算二十四节气，完整实现标准时家奇门排盘逻辑；采用多线程异步计算解决 UI 主线程卡死问题，搭配年份节气缓存大幅提升重复排盘速度。内置可视化九宫盘面，支持对接所有兼容 OpenAI 协议的大模型自动断局。项目模块化分层架构，预留扩展接口，后续可新增八字、六爻等术数功能。
 
+![主界面示意](screenshot.png)
+---
+## ✨ 主要特性
+- **奇门遁甲完整排盘**
+  自动推算节气、局数、三元，生成地盘/天盘/九星/八门/八神全量数据；九宫格可视化区分吉凶色彩（吉绿凶红、三奇金色高亮）。
+- **AI 智能解盘分析**
+  兼容 DeepSeek、OpenAI 等标准 API 大模型，输入预测事项与方位后一键生成通俗断局文本，分析结果支持一键复制。
+- **可视化灵活配置面板**
+  图形界面修改 API Key、模型名称、温度等参数；敏感密钥配置文件已加入 `.gitignore`，避免隐私泄露。
+- **流畅无阻塞计算**
+  使用 QThread 分离 UI 线程与天文计算，搭配节气年份缓存，首次/重复排盘均不会造成窗口卡死。
+- **跨平台兼容**
+  原生支持 Windows / macOS / Linux 全系统运行。
 
-
-基于 PySide6 的奇门遁甲时家排盘桌面应用，支持九宫格可视化与 LLM 智能解盘。
-
-
-
-!\[主界面示意](screenshot.png) <!-- 若有截图可替换 -->
-
-
-
-\---
-
-
-
-\## ✨ 主要特性
-
-
-
-\- \*\*奇门遁甲排盘\*\*：自动计算节气、局数、三元，排布地盘、天盘、九星、八门、八神，九宫格彩色显示（吉凶分色）。
-
-\- \*\*AI 智能分析\*\*：支持 OpenAI API 兼容的 LLM（如 DeepSeek），自动生成断局建议，结果可复制。
-
-\- \*\*灵活配置\*\*：API Key、模型、温度等参数可通过界面设置，敏感配置自动忽略提交。
-
-\- \*\*跨平台\*\*：Windows / macOS / Linux。
-
-
-
-\---
-
-
-
-\## 📦 安装与运行
-
-
-
+---
+## 🚀 快速部署
+### 1. 克隆仓库 & 初始化虚拟环境
 ```bash
+git clone https://github.com/Jason-Lee051/Evander-s-Fun-Little-Gadget_Evander-s-Mysticism-Tools.git
+cd Evander-s-Fun-Little-Gadget_Evander-s-Mysticism-Tools
 
-git clone https://github.com/Jason-Lee051/Evander-s-Fun-Little-Gadget\_Evander-s-Mysticism-Tools.git
-
-cd Evander-s-Fun-Little-Gadget\_Evander-s-Mysticism-Tools
-
+# 创建虚拟环境
 python -m venv venv
 
-\# Windows: venv\\Scripts\\activate
+# Windows 激活环境
+venv\Scripts\activate
 
-\# macOS/Linux: source venv/bin/activate
-
+# 安装全部依赖
 pip install -r requirements.txt
-
 ```
 
-
-
-配置 LLM（可选）：
-
+### 2. 配置 LLM（可选，无需 AI 分析可跳过）
+复制配置模板生成私有配置文件，填入你的大模型 API 密钥：
 ```bash
-
-cp config/llm\_config.example.json config/llm\_config.json
-
-\# 编辑 config/llm\_config.json 填入你的 API Key
-
+cp config/llm_config.example.json config/llm_config.json
+# 使用文本编辑器修改 llm_config.json，填入 API Key、接口地址、模型名
 ```
 
-
-
-启动：
-
+### 3. 启动程序
 ```bash
-
 python main.py
-
 ```
 
+---
+## 📖 使用指南
+1. **执行排盘**
+   顶部菜单「奇门遁甲」→「开始排盘...」，弹窗填写预测事项、所在位置，确认后自动后台计算盘面。
+2. **查看九宫盘局**
+   主窗口渲染完整奇门九宫格，吉门/吉神标记绿色，凶门/凶神标记红色，三奇天干金色突出显示。
+3. **AI 智能分析**
+   排盘完成后点击底部「智能分析」按钮，大模型解读结果弹出独立窗口，支持全文字复制。
+4. **修改 LLM 参数**
+   顶部菜单「设置」→「LLM API 设置...」，可视化修改密钥、模型、采样温度等参数。
 
+---
+## 🛠️ 技术栈
+- GUI：PySide6 (Qt for Python)
+- 天文历法计算：ephem
+- LLM 接口：openai ≥ 1.0
+- 预留绘图依赖：matplotlib
 
-\---
-
-
-
-\## 🧭 使用指南
-
-
-
-1\. \*\*排盘\*\*：菜单「奇门遁甲」→「开始排盘...」，输入事项与位置，点击确定。
-
-2\. \*\*查看盘局\*\*：九宫格显示，吉神/吉门为绿色，凶神/凶门为红色，三奇天干为金色。
-
-3\. \*\*AI 分析\*\*：排盘后点击「🧠 智能分析」按钮，分析结果在新窗口展示，可复制全文。
-
-4\. \*\*API 设置\*\*：菜单「设置」→「LLM API 设置...」可修改模型参数。
-
-
-
-\---
-
-
-
-\## 🛠 技术栈
-
-
-
-\- PySide6 (Qt for Python)
-
-\- ephem（天文计算）
-
-\- openai ≥1.0
-
-\- matplotlib（预留）
-
-
-
-\---
-
-
-
-\## 📂 目录结构
-
-
-
+---
+## 📂 项目目录结构
 ```
-
 .
-
-├── config/
-
-│   ├── llm\_config.example.json   # 配置模板
-
-│   └── llm\_config.json           # 实际配置（需自行创建，已忽略）
-
-├── core/
-
-│   ├── base.py                   # 术数基类
-
-│   ├── llm/                      # LLM 调用与提示词
-
-│   └── qimen/                    # 奇门排盘核心（日历、排盘、渲染）
-
-├── ui/                           # GUI 界面（主窗口、各对话框、绘制控件）
-
-├── main.py
-
-├── requirements.txt
-
-└── .gitignore
-
+├── config/                  # 配置文件目录
+│   ├── llm_config.example.json  # LLM 配置模板（开源提交）
+│   └── llm_config.json          # 私有密钥配置（.gitignore 忽略）
+├── core/                    # 核心业务逻辑
+│   ├── base.py              # 术数通用抽象基类
+│   ├── llm/                 # 大模型调用、提示词管理
+│   └── qimen/               # 奇门遁甲核心（节气历法、排盘算法、盘面渲染）
+├── ui/                      # 全部图形界面代码
+│   ├── main_window.py       # 程序主窗口
+│   ├── qimen_view.py        # 奇门九宫绘制控件
+│   └── 各类弹窗对话框
+├── assets/                  # 字体、图标静态资源
+├── main.py                  # 程序入口
+├── requirements.txt         # 依赖清单
+└── .gitignore               # 忽略密钥、缓存、虚拟环境等文件
 ```
 
+---
+## ⚠️ 注意事项
+1. **API 密钥安全**：`config/llm_config.json` 已写入 `.gitignore`，请勿将包含密钥的配置提交至公开仓库。
+2. **Python 版本**：运行环境 Python ≥ 3.8。
+3. **历法精度说明**：节气计算基于 ephem 天文库，绝大多数年份精准，极少数跨年边界日期存在微小偏差。
 
+---
+## 🔮 未来开发计划
+- 新增六爻、八字等传统术数模块
+- 本地排盘历史记录存储与查询
+- 盘面图片导出保存功能
+- 多语言界面国际化支持
 
-\---
+---
+## 🤝 贡献指南
+欢迎提交功能迭代与 Bug 修复：
+1. Fork 本仓库
+2. 新建特性分支开发
+3. 提交修改并发起 Pull Request
 
+---
+## 📮 联系与反馈
+- 问题反馈：[GitHub Issues](https://github.com/Jason-Lee051/Evander-s-Fun-Little-Gadget_Evander-s-Mysticism-Tools/issues)
+- 作者主页：[Jason-Lee051](https://github.com/Jason-Lee051)
 
-
-\## ⚠️ 注意事项
-
-
-
-\- \*\*API Key 安全\*\*：`config/llm\_config.json` 已加入 `.gitignore`，切勿提交到公开仓库。
-
-\- Python 版本要求 ≥3.8。
-
-\- 节气计算基于 `ephem`，精确但少数年份边界可能需要微调。
-
-
-
-\---
-
-
-
-\## 🔮 未来计划
-
-
-
-\- 增加其他术数（六爻、八字等）
-
-\- 排盘历史记录
-
-\- 导出图片
-
-\- 多语言支持
-
-
-
-\---
-
-
-
-\## 🤝 贡献
-
-
-
-Fork → 特性分支 → 提交 → Pull Request。
-
-
-
-\---
-
-
-
-\## 📬 联系
-
-
-
-\[Issue](https://github.com/Jason-Lee051/Evander-s-Fun-Little-Gadget\_Evander-s-Mysticism-Tools/issues) 或联系作者 \[Jason-Lee051](https://github.com/Jason-Lee051)。
-
-
-
-\---
-
-
-
-\*\*Enjoy your mystical journey!\*\* 🌟
-
-```
-
+**Enjoy your mystical journey! ✨**
