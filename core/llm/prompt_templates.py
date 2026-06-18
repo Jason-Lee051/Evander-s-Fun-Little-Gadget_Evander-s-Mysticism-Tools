@@ -10,7 +10,6 @@ def format_qimen_result(result: dict) -> str:
     lines.append(f"**局数**：{result.get('dun_type', '')}{result.get('ju', '')}局   **节气**：{result.get('jieqi', '')} {result.get('yuan', '')}")
     lines.append("")
     lines.append("**九宫信息**：")
-    # 定义宫位顺序
     gong_names = {
         1: "坎1宫", 8: "艮8宫", 3: "震3宫", 4: "巽4宫",
         9: "离9宫", 2: "坤2宫", 7: "兑7宫", 6: "乾6宫",
@@ -26,14 +25,16 @@ def format_qimen_result(result: dict) -> str:
     return "\n".join(lines)
 
 def build_qimen_prompt(pan_text: str, matter: str, location: str) -> str:
-    """生成奇门遁甲分析提示词"""
+    """生成奇门遁甲分析提示词（评分强制放在开头）"""
     prompt = f"""你是一位精通奇门遁甲的占卜师。请根据以下排盘结果，结合用户提供的预测事项和地点，进行详细、易懂的断局分析。
 
 要求：
-1. 先简要解释盘局特点（如用神落宫、吉凶格局）。
-2. 结合事项“{matter}”和地点“{location}”，给出针对性结论和建议。
-3. 如果涉及方位、时间，请结合盘内信息提示。
-4. 语气平和，避免绝对化。
+1. **首先，在回答的最开头给出针对所问事项的综合评分（百分制），并简要说明评分依据。**
+   评分应基于盘中吉凶、用神旺衰、格局组合等因素综合给出。
+2. 接着简要解释盘局特点（如用神落宫、吉凶格局）。
+3. 然后结合事项“{matter}”和地点“{location}”，给出针对性结论和建议。
+4. 如果涉及方位、时间，请结合盘内信息提示。
+5. 语气平和，避免绝对化。
 
 排盘结果：
 {pan_text}
