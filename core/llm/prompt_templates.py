@@ -2,6 +2,7 @@
 core/llm/prompt_templates.py - 格式化占卜结果为文本并生成分析提示词
 """
 
+# ========== 奇门遁甲部分（原有） ==========
 def format_qimen_result(result: dict) -> str:
     """将奇门遁甲排盘结果格式化为清晰文本"""
     lines = []
@@ -37,6 +38,34 @@ def build_qimen_prompt(pan_text: str, matter: str, location: str) -> str:
 5. 语气平和，避免绝对化。
 
 排盘结果：
+{pan_text}
+
+请开始分析："""
+    return prompt
+
+# ========== 梅花易数部分（新增） ==========
+def format_meihua_result(gua_data: dict) -> str:
+    """格式化梅花易数卦盘为文本"""
+    from core.meihua.render import format_meihua_result as _format
+    return _format(gua_data)
+
+def build_meihua_prompt(pan_text: str, question: str, background: str = "") -> str:
+    """生成梅花易数分析提示词（评分放在开头）"""
+    prompt = f"""你是一位精通《梅花易数》的资深易学专家。请根据以下卦象信息，为问卦者提供细致、有洞察力的解读。
+
+要求：
+1. **首先，在回答的最开头给出针对所问事项的综合评分（百分制），并简要说明评分依据。**
+   评分应基于体用生克、卦象吉凶、爻辞启示等因素综合给出。
+2. 接着进行卦象总览，解释本卦、变卦、互卦的核心含义。
+3. 详细分析体用生克关系，说明对所问之事的吉凶影响。
+4. 解读动爻的爻辞及其启示。
+5. 最后给出综合建议，语言通俗易懂。
+
+【问卦者信息】：
+所问事项：{question}
+背景：{background if background else "无额外信息"}
+
+【卦象数据】：
 {pan_text}
 
 请开始分析："""
